@@ -42,6 +42,11 @@ The method of achieving The Goal uses rebased pulls and forced pushes.
 The method doesn't use `checkout`.
 Instead, it uses a different source tree for each branch.
 
+### Warning
+
+If you have commits on your `test` branch, or any other of your branches, **_don't use this method on them_**.  You could lose work!
+It should be used with new branches created with `urbranch`.
+
 ### Preliminaries
 
 Create a github account and fork the urbit repository.
