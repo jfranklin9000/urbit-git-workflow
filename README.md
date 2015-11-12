@@ -1,2 +1,2 @@
 # urbit-git-workflow
-Create long lived urbit branches on your fork with your commits at the tips.
+Create long lived branches on your urbit fork with your commits at the tips.
