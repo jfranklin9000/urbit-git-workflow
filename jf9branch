@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# Copyright (c) 2015 John Franklin (jfranklin9000@gmail.com)
+# Licensed under the MIT license.
+
+if [ $# -ne 2 ]
+then
+	echo "usage: jf9branch <github-user> <urbit-branch>"
+	exit
+fi
+
+# Command line args.
+ghuser=$1					# GITHUB-USER (we don't actually use this)
+branch=$2					# URBIT-BRANCH
+
+# We'll clone into this directory.
+branchdir="urbit-$branch"
+
+# This is where the everything lives.
+URBIT="`echo ~/URBIT`"
+
+# So go there.
+if [ -d $URBIT ]
+then
+	echo "\nEntering $URBIT"
+	cd $URBIT
+else
+	echo "$URBIT doesn't exist"
+	exit
+fi
+
+# Create the branch if we can.
+git clone -b $branch urbit-jfranklin9000-fork.git $branchdir
+if [ $? -ne 0 ]
+then
+	exit
+fi

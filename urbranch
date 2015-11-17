@@ -17,15 +17,8 @@ branch=$2					# URBIT-BRANCH
 branchdir="urbit-$branch"
 
 # Source branch to clone from.
-# Only 'master' and 'test' exist.
-# If $branch is 'master' $src will be 'master',
-# else $src will be 'test'.
-if [ $branch = "master" ]
-then
-	src="master"
-else
-	src="test"
-fi
+# Only 'master' exists.
+src="master"
 
 # This is where the everything lives.
 URBIT="`echo ~/URBIT`"
