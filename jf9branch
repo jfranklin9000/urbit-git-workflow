@@ -3,18 +3,19 @@
 # Copyright (c) 2015 John Franklin (jfranklin9000@gmail.com)
 # Licensed under the MIT license.
 
-if [ $# -ne 2 ]
+if [ $# -ne 3 ]
 then
-	echo "usage: jf9branch <github-user> <urbit-branch>"
+	echo "usage: jf9branch <github-user> <source-branch-or-tag> <named-branch>"
 	exit
 fi
 
 # Command line args.
-ghuser=$1					# GITHUB-USER (we don't actually use this)
-branch=$2					# URBIT-BRANCH
+usr=$1					# GITHUB-USER
+src=$2					# SOURCE-BRANCH (examples: master (branch), v0.4.4 (tag))
+dst=$3					# NAMED-BRANCH (example: nock-decrement-opcode)
 
 # We'll clone into this directory.
-branchdir="urbit-$branch"
+dir="urbit-$dst"
 
 # This is where the everything lives.
 URBIT="`echo ~/URBIT`"
@@ -30,7 +31,7 @@ else
 fi
 
 # Create the branch if we can.
-git clone -b $branch urbit-jfranklin9000-fork.git $branchdir
+git clone -b $src urbit-jfranklin9000-fork.git $dir
 if [ $? -ne 0 ]
 then
 	exit

@@ -1,4 +1,4 @@
-# ~ripnul-rilnyx urbit git workflow
+# ~dirwex-dosrev urbit git workflow
 
 Copyright (c) 2015 John Franklin (jfranklin9000@gmail.com)
 
@@ -10,15 +10,16 @@ Create long lived branches on your github urbit repository fork with
 your commits at the tips of the branches.
 
 You want to create
-`https://github.com/GITHUB-USER/urbit/tree/URBIT-BRANCH`
+`https://github.com/GITHUB-USER/urbit/tree/NAMED-BRANCH`
 and keep it up to date with
-`https://github.com/urbit/urbit/tree/master`
+`https://github.com/urbit/urbit/tree/SOURCE-BRANCH`
 with your commits at the tip of the branch.
 
 Example:
 
     GITHUB-USER = jfranklin9000
-    URBIT-BRANCH = nock-decrement-opcode
+    SOURCE-BRANCH = master
+    NAMED-BRANCH = nock-decrement-opcode
 
 ### Notes
 
@@ -28,9 +29,9 @@ This is where everything lives:
 
     ~/URBIT
 
-This is where branch `URBIT-BRANCH` lives:
+This is where branch `NAMED-BRANCH` lives:
 
-    ~/URBIT/urbit-URBIT-BRANCH
+    ~/URBIT/urbit-NAMED-BRANCH
 
 You can adjust these as you see fit.
 
@@ -44,8 +45,8 @@ Instead, it uses a different source tree for each branch.
 
 ### Warning
 
-If you have commits on your `master` branch, or any other of your branches,
-**_don't use this method on them_**.  You could lose work!
+If you have commits on your `SOURCE-BRANCH` branch, or any other of your
+branches, **_don't use this method on them_**.  You could lose work!
 It should be used with new branches created with `urbranch`.
 
 ### Preliminaries
@@ -68,7 +69,7 @@ but this is a good noob setting.
     mkdir URBIT
     cd URBIT
 
-    git clone --mirror git://github.com/urbit/urbit.git
+    git clone --mirror https://github.com/urbit/urbit
 
 This is the only time you'll clone from the github urbit repository.
 You'll clone from the local repository for all the branches you create.
@@ -125,38 +126,39 @@ automates the creation of branches.
     git pull
     git push
 
-### Create `URBIT-BRANCH` "branch" from the local repository
+### Create `NAMED-BRANCH` "branch" from the local repository
 
-Note that "branch" is in quotes because you'll clone the `master` branch.
+Note that "branch" is in quotes because you'll clone the `SOURCE-BRANCH` branch.
+(`SOURCE-BRANCH` can also be a tag.)
 
     cd ~/URBIT
-    git clone -b master urbit.git urbit-URBIT-BRANCH
-    cd urbit-URBIT-BRANCH
+    git clone -b SOURCE-BRANCH urbit.git urbit-NAMED-BRANCH
+    cd urbit-NAMED-BRANCH
 
 So if you
 
     git branch -l
 
-you'll see `* master`.
+you'll see `* SOURCE-BRANCH` (or `* (no branch)` if you cloned from a tag).
 
 You can know which branch you're in by looking at the directory name.
 
-    git config --local branch.master.rebase true
+    git config --local branch.SOURCE-BRANCH.rebase true
 
-Note that you specify `master` instead of `URBIT-BRANCH`.
+Note that you specify `SOURCE-BRANCH` instead of `NAMED-BRANCH`.
 
     git remote add GITHUB-USER https://github.com/GITHUB-USER/urbit
     git config --local remote.pushdefault GITHUB-USER
-    git config --local remote.GITHUB-USER.push +master:URBIT-BRANCH
+    git config --local remote.GITHUB-USER.push +SOURCE-BRANCH:NAMED-BRANCH
 
-#### Updating the `URBIT-BRANCH` branch
+#### Updating the `NAMED-BRANCH` branch
 
-    cd ~/URBIT/urbit-URBIT-BRANCH
+    cd ~/URBIT/urbit-NAMED-BRANCH
     urbup
     git pull
     git push
 
-The first `git push` will create `URBIT-BRANCH` on github for you.
+The first `git push` will create `NAMED-BRANCH` on github for you.
 
 You will do this regularly to keep this branch up to date.
 
@@ -167,13 +169,13 @@ You will do this regularly to keep this branch up to date.
     git commit -m "SOME COMMIT MESSAGE"
     git push
 
-Your `URBIT-BRANCH` branch will logically be `master` plus your commits
-at the tip.  This will stay true even as you add more of your own
-commits while also getting commits from the urbit repository.
+Your `NAMED-BRANCH` branch will logically be `SOURCE-BRANCH` plus your
+commits at the tip.  This will stay true even as you add more of your
+own commits while also getting commits from the urbit repository.
 
-#### Compare `URBIT-BRANCH` with `master`
+#### Compare `NAMED-BRANCH` with `SOURCE-BRANCH`
 
-https://github.com/urbit/urbit/compare/master...GITHUB-USER:URBIT-BRANCH
+https://github.com/urbit/urbit/compare/SOURCE-BRANCH...GITHUB-USER:NAMED-BRANCH
 
 The Goal has been achieved.
 
@@ -208,22 +210,19 @@ fi
 # Copyright (c) 2015 John Franklin (jfranklin9000@gmail.com)
 # Licensed under the MIT license.
 
-if [ $# -ne 2 ]
+if [ $# -ne 3 ]
 then
-	echo "usage: urbranch <github-user> <urbit-branch>"
+	echo "usage: urbranch <github-user> <source-branch-or-tag> <named-branch>"
 	exit
 fi
 
 # Command line args.
-ghuser=$1					# GITHUB-USER
-branch=$2					# URBIT-BRANCH
+usr=$1					# GITHUB-USER
+src=$2					# SOURCE-BRANCH (examples: master (branch), v0.4.4 (tag))
+dst=$3					# NAMED-BRANCH (example: nock-decrement-opcode)
 
 # We'll clone into this directory.
-branchdir="urbit-$branch"
-
-# Source branch to clone from.
-# Only 'master' exists.
-src="master"
+dir="urbit-$dst"
 
 # This is where the everything lives.
 URBIT="`echo ~/URBIT`"
@@ -239,23 +238,23 @@ else
 fi
 
 # Create the branch if we can.
-git clone -b $src urbit.git $branchdir
+git clone -b $src urbit.git $dir
 if [ $? -ne 0 ]
 then
 	exit
 fi
 
 # Configure the branch.
-cd $branchdir
+cd $dir
 
 # Refer to URBIT-GIT-WORKFLOW.md for explanations of these commands.
 git config --local branch.$src.rebase true
-git remote add $ghuser https://github.com/$ghuser/urbit
-git config --local remote.pushdefault $ghuser
-git config --local remote.$ghuser.push +$src:$branch
+git remote add $usr https://github.com/$usr/urbit
+git config --local remote.pushdefault $usr
+git config --local remote.$usr.push +$src:$dst
 
 echo "\nTo push this branch to GitHub execute these commands:"
-echo "cd $URBIT/$branchdir"
+echo "cd $URBIT/$dir"
 echo "git push"
 ````
 
@@ -263,14 +262,14 @@ echo "git push"
 
 You could have created your branches this way:
 
-    urbranch GITHUB-USER master
-    urbranch GITHUB-USER URBIT-BRANCH
+    urbranch GITHUB-USER master master
+    urbranch GITHUB-USER master NAMED-BRANCH
 
 ### Summary
 
 #### Create `ANOTHER-BRANCH`
 
-    urbranch GITHUB-USER ANOTHER-BRANCH
+    urbranch GITHUB-USER master ANOTHER-BRANCH
 
 #### Update `ANOTHER-BRANCH`
 
