@@ -15,7 +15,7 @@ src=$2					# SOURCE-BRANCH (examples: master (branch), v0.4.4 (tag))
 dst=$3					# NAMED-BRANCH (example: nock-decrement-opcode)
 
 # We'll clone into this directory.
-dir="urbit-$dst"
+dir="jfranklin9000-$dst"
 
 # This is where the everything lives.
 URBIT="`echo ~/URBIT`"
@@ -36,3 +36,16 @@ if [ $? -ne 0 ]
 then
 	exit
 fi
+
+# Configure the branch.
+cd $dir
+
+# Refer to URBIT-GIT-WORKFLOW.md for explanations of these commands.
+git config --local branch.$src.rebase true
+git remote add $usr https://github.com/$usr/urbit
+git config --local remote.pushdefault $usr
+git config --local remote.$usr.push +$src:$dst
+
+echo "\nTo push this branch to GitHub execute these commands:"
+echo "cd $URBIT/$dir"
+echo "git push"
