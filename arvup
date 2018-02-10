@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Copyright (c) 2015 John Franklin (jfranklin9000@gmail.com)
+# Licensed under the MIT license.
+
+# This is where the everything lives.
+URBIT="`echo ~/URBIT`"
+
+# So go there.
+if [ -d $URBIT ]
+then
+	echo "Updating $URBIT/arvo.git"
+	cd $URBIT/arvo.git
+	git remote update
+else
+	echo "$URBIT doesn't exist"
+	exit
+fi
