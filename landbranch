@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# Copyright (c) 2015 John Franklin (jfranklin9000@gmail.com)
+# Licensed under the MIT license.
+
+if [ $# -ne 3 ]
+then
+	echo "usage: landbranch <github-user> <source-branch-or-tag> <named-branch>"
+	exit
+fi
+
+# Command line args.
+usr=$1					# GITHUB-USER
+src=$2					# SOURCE-BRANCH (examples: master)
+dst=$3					# NAMED-BRANCH (example: typos)
+
+# We'll clone into this directory.
+dir="landscape-$dst"
+
+# This is where the everything lives.
+URBIT="`echo ~/URBIT`"
+
+# So go there.
+if [ -d $URBIT ]
+then
+	echo "\nEntering $URBIT"
+	cd $URBIT
+else
+	echo "$URBIT doesn't exist"
+	exit
+fi
+
+# Create the branch if we can.
+git clone -b $src landscape.git $dir
+if [ $? -ne 0 ]
+then
+	exit
+fi
+
+# Configure the branch.
+cd $dir
+
+# Refer to URBIT-GIT-WORKFLOW.md for explanations of these commands.
+git config --local branch.$src.rebase true
+git remote add $usr https://github.com/$usr/landscape
+git config --local remote.pushdefault $usr
+git config --local remote.$usr.push +$src:$dst
+
+echo "\nTo push this branch to GitHub execute these commands:"
+echo "cd $URBIT/$dir"
+echo "git push"
