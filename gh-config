@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# Copyright (c) 2019 John Franklin (jfranklin9000@gmail.com)
+# Licensed under the MIT license.
+
+echo "
+NOTE: This script doesn't actually do anything.
+
+Create a github account and fork the desired repository.
+
+Configure git:
+
+git config --global user.name \"John Doe\"
+git config --global user.email johndoe@example.com
+
+You'll push to explicitly named branches (thereby overriding this) but this is a good noob setting.
+
+git config --global push.default simple
+
+You can now clone (urbit) repos, keep them up-to-date and create branches.
+
+Example:
+
+gh-clone arvo
+gh-update arvo
+gh-branch jfranklin9000 arvo master cool-new-feature
+
+See:
+
+https://github.com/jfranklin9000/urbit-git-workflow/blob/master/URBIT-GIT-WORKFLOW.md
+"

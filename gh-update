@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Copyright (c) 2019 John Franklin (jfranklin9000@gmail.com)
+# Licensed under the MIT license.
+
+if [ $# -ne 1 ]
+then
+	echo "usage: gh-update <github-repo>"
+	exit
+fi
+
+# Command line args.
+rep=$1					# GITHUB-REPO
+
+# This is where the everything lives.
+URBIT="`echo ~/URBIT`"
+
+# The is where the repo lives.
+REPO="$URBIT/$rep.git"
+
+# So go there.
+if [ -d $REPO ]
+then
+	echo "\nEntering $REPO"
+	cd $URBIT/$rep.git
+else
+	echo "$REPO doesn't exist"
+	exit
+fi
+
+echo "Updating $REPO"
+git remote update

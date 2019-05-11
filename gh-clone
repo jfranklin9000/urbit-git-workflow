@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# Copyright (c) 2019 John Franklin (jfranklin9000@gmail.com)
+# Licensed under the MIT license.
+
+if [ $# -ne 1 ]
+then
+	echo "usage: gh-clone <github-repo>"
+	exit
+fi
+
+# Command line args.
+rep=$1					# GITHUB-REPO
+
+# This is where the everything lives.
+URBIT="`echo ~/URBIT`"
+
+# So go there.
+if [ -d $URBIT ]
+then
+	echo "\nEntering $URBIT"
+	cd $URBIT
+else
+	echo "$URBIT doesn't exist"
+	exit
+fi
+
+git clone --mirror https://github.com/urbit/$rep
